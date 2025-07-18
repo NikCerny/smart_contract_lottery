@@ -16,14 +16,14 @@ contract Lottery {
     function enter() public payable {
         uint256 minimumUSD = 2 * 10 ** 18; // 2 USD
         require(
-            getConversionRate(msg.value) >= minimumUSD,
+            getEntranceFee() >= minimumUSD,
             "You need to spend more USD"
         );
         addressToAmountFunded[msg.sender] += msg.value;
-        players.push(msg.sender);
+        players.push(payable(msg.sender));
     }
     function getPrice() public view returns (uint256) {
-        (, int256 answer, , , ) = priceFeed.latestRoundData();
+        (, int256 answer, , , ) = ethUsdPriceFeed.latestRoundData();
         return uint256(answer * 10 ** (18 - 8)); // 8 is the decimals of the price feed in chainlink ETH/USD
     }
 
